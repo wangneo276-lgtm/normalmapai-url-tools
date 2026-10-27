@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <PackageId>NormalMapAi.UrlTools</PackageId>
+    <Version>0.1.0</Version>
+    <Authors>wangneo276-lgtm</Authors>
+    <Description>Free normal map generator by NormalMapAI. Convert any photo into a normal map with live 3D preview — plus height, roughness, AO and more. Private in-browser; export for Unity, Unreal, Godot and Blender.</Description>
+    <PackageProjectUrl>https://normalmapai.com/</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/wangneo276-lgtm/normalmapai-url-tools</RepositoryUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="tests/**" />
+    <None Include="../README.md" Pack="true" PackagePath="" />
+    <None Include="../LICENSE" Pack="true" PackagePath="LICENSE" />
+  </ItemGroup>
+</Project>

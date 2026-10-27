@@ -1,0 +1,123 @@
+#!/bin/sh
+set -eu
+ORIGIN="https://normalmapai.com"
+
+die() {
+  printf '%s\n' "$1" >&2
+  exit 2
+}
+
+is_known() {
+  case "$1" in
+    /|/app|/pricing|/guides|/about|/contact|/privacy|/terms|/ai-texture-generator|/ai-3d-texture|/ai-3d-model-generator|/seamless-texture|/metallic-map-generator|/curvature-map-generator|/orm-map-generator|/glossiness-map-generator|/albedo-map-generator|/tileable-texture-generator|/normal-map-inverter|/height-to-normal-map|/normal-to-height-map|/seamless-texture-checker|/3d-print-height-map|/power-of-two-texture-resizer|/bump-map-generator|/ao-map-generator|/roughness-map-generator|/height-map-generator|/displacement-map-generator|/specular-map-generator|/texture-maker|/pbr-texture-generator|/transparent-png|/image-to-normal-map|/guides/how-to-use-normal-map-generator|/guides/how-to-make-seamless-textures|/guides/import-pbr-maps-unity-unreal-blender|/guides/pbr-maps-explained|/guides/height-vs-displacement-maps|/guides/directx-vs-opengl-normal-maps) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
+canonical() {
+  raw=$(printf '%s' "${1:-}" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+  [ -n "$raw" ] || die "path required"
+  case "$raw" in
+    *\\*) die "invalid path" ;;
+    *%*) die "invalid path" ;;
+  esac
+  raw=${raw%%#*}
+  raw=${raw%%\?*}
+  lower=$(printf '%s' "$raw" | tr 'A-Z' 'a-z')
+  case "$lower" in
+    https://*|http://*|//*)
+      rest=$raw
+      case "$lower" in
+        https://*) rest=${rest#https://} ;;
+        http://*) rest=${rest#http://} ;;
+        //*) rest=${rest#//} ;;
+      esac
+      host=${rest%%/*}
+      case "$rest" in
+        */*) path=/${rest#*/} ;;
+        *) path=/ ;;
+      esac
+      case "$host" in
+        *@*) die "userinfo not allowed" ;;
+        *:*) die "port not allowed" ;;
+      esac
+      host=$(printf '%s' "$host" | tr 'A-Z' 'a-z')
+      [ "$host" = "normalmapai.com" ] || die "host not allowed"
+      ;;
+    /*) path=$raw ;;
+    *) path=/$raw ;;
+  esac
+  path=$(printf '%s' "$path" | tr 'A-Z' 'a-z' | sed 's#//*#/#g')
+  oldifs=$IFS
+  IFS=/
+  for seg in $path; do
+    case "$seg" in
+      .|..) die "path traversal" ;;
+    esac
+  done
+  IFS=$oldifs
+  if [ "$path" != "/" ]; then
+    while [ "${path%/}" != "$path" ]; do
+      path=${path%/}
+    done
+  fi
+  [ -n "$path" ] || path=/
+  is_known "$path" || die "unknown path"
+  if [ "$path" = "/" ]; then
+    printf '%s\n' "$ORIGIN/"
+  else
+    printf '%s\n' "$ORIGIN$path"
+  fi
+}
+
+cmd=${1:-}
+arg=${2:-}
+case "$cmd" in
+  canonical) canonical "$arg" ;;
+  map)
+    case "$arg" in
+    normal) canonical /image-to-normal-map ;;
+    height) canonical /height-map-generator ;;
+    roughness) canonical /roughness-map-generator ;;
+    ao) canonical /ao-map-generator ;;
+    bump) canonical /bump-map-generator ;;
+    displacement) canonical /displacement-map-generator ;;
+    specular) canonical /specular-map-generator ;;
+    metallic) canonical /metallic-map-generator ;;
+    curvature) canonical /curvature-map-generator ;;
+    orm) canonical /orm-map-generator ;;
+    glossiness) canonical /glossiness-map-generator ;;
+    albedo) canonical /albedo-map-generator ;;
+      *) die "unknown map" ;;
+    esac
+    ;;
+  guide)
+    case "$arg" in
+    how-to-use-normal-map-generator) canonical /guides/how-to-use-normal-map-generator ;;
+    how-to-make-seamless-textures) canonical /guides/how-to-make-seamless-textures ;;
+    import-pbr-maps-unity-unreal-blender) canonical /guides/import-pbr-maps-unity-unreal-blender ;;
+    pbr-maps-explained) canonical /guides/pbr-maps-explained ;;
+    height-vs-displacement-maps) canonical /guides/height-vs-displacement-maps ;;
+    directx-vs-opengl-normal-maps) canonical /guides/directx-vs-opengl-normal-maps ;;
+      *) die "unknown guide" ;;
+    esac
+    ;;
+  page)
+    case "$arg" in
+    home) canonical / ;;
+    app) canonical /app ;;
+    pricing) canonical /pricing ;;
+    guides) canonical /guides ;;
+    about) canonical /about ;;
+    contact) canonical /contact ;;
+    privacy) canonical /privacy ;;
+    terms) canonical /terms ;;
+      *) die "unknown page" ;;
+    esac
+    ;;
+  home) canonical / ;;
+  *)
+    echo "usage: normalmapai-url-tools canonical <path> | map <kind> | guide <slug> | page <name> | home" >&2
+    exit 2
+    ;;
+esac

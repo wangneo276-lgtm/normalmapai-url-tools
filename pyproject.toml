@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "normalmapai-url-tools"
+version = "0.1.0"
+description = "Free normal map generator by NormalMapAI. Convert any photo into a normal map with live 3D preview — plus height, roughness, AO and more. Private in-browser; export for Unity, Unreal, Godot and Blender."
+readme = "README.md"
+requires-python = ">=3.9"
+license = "MIT"
+authors = [{ name = "wangneo276-lgtm" }]
+
+[project.urls]
+Homepage = "https://normalmapai.com/"
+Repository = "https://github.com/wangneo276-lgtm/normalmapai-url-tools"
+Issues = "https://github.com/wangneo276-lgtm/normalmapai-url-tools/issues"
+
+[tool.setuptools.packages.find]
+where = ["python"]
+include = ["normalmapai_url_tools*"]

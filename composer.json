@@ -1,0 +1,19 @@
+{
+  "name": "bbwdadfg/normalmapai-url-tools",
+  "description": "Free normal map generator by NormalMapAI. Convert any photo into a normal map with live 3D preview — plus height, roughness, AO and more. Private in-browser; export for Unity, Unreal, Godot and Blender.",
+  "type": "library",
+  "license": ["MIT"],
+  "homepage": "https://normalmapai.com/",
+  "support": {
+    "source": "https://github.com/wangneo276-lgtm/normalmapai-url-tools"
+  },
+  "autoload": {
+    "psr-4": {
+      "NormalMapAi\\UrlTools\\": "php/src/NormalMapAi/UrlTools/"
+    }
+  },
+  "require": {
+    "php": ">=8.1"
+  },
+  "authors": [{"name": "wangneo276-lgtm"}]
+}

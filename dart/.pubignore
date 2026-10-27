@@ -1,0 +1,9 @@
+*
+!CHANGELOG.md
+!LICENSE
+!README.md
+!pubspec.yaml
+!lib/
+!lib/**
+!test/
+!test/**
